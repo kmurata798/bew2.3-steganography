@@ -18,7 +18,9 @@ def decode_image(path_to_png):
     Output: None
     Description: Decodes the hidden message in a png image file.
     Takes the image, looks at the red channel of the given image and
-    creates a new black and white image based on the least 
+    creates a new black and white image based on the least significant bit (LSB)
+    for each pixel in the original image. 
+    ==> If the LSB is 1, the new image's pixel will be white
     """
     # Open the image using PIL:
     encoded_image = Image.open(path_to_png)
@@ -40,10 +42,10 @@ def decode_image(path_to_png):
 
             # if pixel string ends with 0, the pixel at x_size, y_size == black
             if bin(red_channel.getpixel((x, y)))[-1] == '0':
-                pixels[x, y] = (255, 255, 255)
+                pixels[x, y] = (0, 0, 0)
             # if ends with 1, the pixel at x_size, y_size == white
             else:
-                pixels[x, y] = (0, 0, 0)
+                pixels[x, y] = (255, 255, 255)
                 
     # print(red_channel)  # Start coding here!
 
@@ -75,7 +77,25 @@ def encode_image(encode_text, path_to_png="my_encoded_img.png"):
     encoded_img = Image.new('RGB', (x_size, y_size))
     pixels = orig_img.load()
 
+    # loop through x_size and y_size
+    for x in range(x_size):
+        for y in range(y_size):
+            # get channel values for pixels at x and y
+            red_channel_pix = red_channel.getpixel((x,y))
+            green_channel_pix = green_channel.getpixel((x,y))
+            blue_channel_pix = blue_channel.getpixel((x,y))
+            # set the new image's pixel value for x and y to be the same as the base img
+            encoded_img.putpixel((x,y), (red_channel_pix, green_channel_pix, blue_channel_pix))
+            # check if red channel is odd number
+            if red_channel_pix % 2 == 1:
+                # make the pixel even
+                red_channel_pix -= 1
+                # reset our new image's x and y pixel to the new value
+                encoded_img.putpixel((x,y), (red_channel_pix, green_channel_pix, blue_channel_pix))
+            # combine the new image and secret image
+    new_img = ImageChops.add(encoded_img, image_text)
 
+    new_img.save("my_encoded_img.png")
 
 def write_text(img_size, desired_text):
     """
