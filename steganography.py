@@ -9,12 +9,16 @@ Deliverables:
     3. Your own image encoded with hidden secret text!
 """
 # TODO: Run `pip3 install Pillow` before running the code.
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont, ImageChops
 
 
 def decode_image(path_to_png):
     """
-    TODO: Add docstring and complete implementation.
+    Input: path_to_png: String
+    Output: None
+    Description: Decodes the hidden message in a png image file.
+    Takes the image, looks at the red channel of the given image and
+    creates a new black and white image based on the least 
     """
     # Open the image using PIL:
     encoded_image = Image.open(path_to_png)
@@ -27,24 +31,62 @@ def decode_image(path_to_png):
     pixels = decoded_image.load()
     x_size, y_size = encoded_image.size
 
-    # TODO: Using the variables declared above, replace `print(red_channel)` with a complete implementation:
+    # loop through x_size and y_size
     for x in range(x_size):
         for y in range(y_size):
             # => .getpixel returns the pixel value at a given position
             # CONFUSED on what the & operator is doing...
-            if red_channel.getpixel((x, y)) & 1:
-                pixels[x, y] = (0, 0, 0)
-            else:
+            # convert each red channel pixel value into a binary string, then check if the string ends in 0 or 1
+
+            # if pixel string ends with 0, the pixel at x_size, y_size == black
+            if bin(red_channel.getpixel((x, y)))[-1] == '0':
                 pixels[x, y] = (255, 255, 255)
+            # if ends with 1, the pixel at x_size, y_size == white
+            else:
+                pixels[x, y] = (0, 0, 0)
+                
     # print(red_channel)  # Start coding here!
 
     # DO NOT MODIFY. Save the decoded image to disk:
-    decoded_image.save("decoded_image.png")
+    decoded_image.save("my_decoded_text.png")
 
 
-def encode_image(path_to_png):
+def encode_image(encode_text, path_to_png="my_encoded_img.png"):
     """
-    TODO: Add docstring and complete implementation.
+    Input: encode_text: String, path_to_png: String
+    Output: None
+    Description: Encodes a secret message in the red channel into a separate copy 
+    of the desired image and saves it to the img file.
     """
-    pass
-decode_image("encoded_sample.png")
+    # grab the original image
+    orig_img = Image.open(path_to_png)
+
+    # Split the different color channels into variables
+    red_channel = orig_img.split()[0]
+    green_channel = orig_img.split()[1]
+    blue_channel = orig_img.split()[2]
+
+    x_size = orig_img.size[0]
+    y_size = orig_img.size[1]
+
+ 
+
+def write_text(img_size, desired_text):
+    """
+    Writes a text in black to a white image and returns it.
+    """
+    # create an image
+    img_txt = Image.new('RGB', img_size, (1,0,0))
+
+    # get a drawing context
+    draw = ImageDraw.Draw(img_txt)
+
+    # write black text
+    draw.multiline_text((10,10), desired_text, fill=(0,0,0))
+    return img_txt
+
+
+encode_text = "You sneaky little programmer..."
+path_to_png = "my_encoded_img.png"
+# encode_image(encode_text, path_to_png)
+decode_image(path_to_png)
