@@ -69,7 +69,13 @@ def encode_image(encode_text, path_to_png="my_encoded_img.png"):
     x_size = orig_img.size[0]
     y_size = orig_img.size[1]
 
- 
+    image_text = write_text(orig_img.size, encode_text)
+
+    # make blank image for text
+    encoded_img = Image.new('RGB', (x_size, y_size))
+    pixels = orig_img.load()
+
+
 
 def write_text(img_size, desired_text):
     """
