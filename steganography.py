@@ -1,16 +1,4 @@
-"""
-[Day 7] Assignment: Steganography
-    - Turn in on Gradescope (https://make.sc/bew2.3-gradescope)
-    - Lesson Plan: https://make-school-courses.github.io/BEW-2.3-Web-Security/#/Lessons/Steganography
-
-Deliverables:
-    1. All TODOs in this file.
-    2. Decoded sample image with secret text revealed
-    3. Your own image encoded with hidden secret text!
-"""
-# TODO: Run `pip3 install Pillow` before running the code.
 from PIL import Image, ImageDraw, ImageFont, ImageChops
-
 
 def decode_image(path_to_png):
     """
@@ -20,7 +8,7 @@ def decode_image(path_to_png):
     Takes the image, looks at the red channel of the given image and
     creates a new black and white image based on the least significant bit (LSB)
     for each pixel in the original image. 
-    ==> If the LSB is 1, the new image's pixel will be white
+    ==> (If the LSB is 1, the new image's pixel will be white, else the pixel will be black)
     """
     # Open the image using PIL:
     encoded_image = Image.open(path_to_png)
@@ -99,7 +87,9 @@ def encode_image(encode_text, path_to_png="my_encoded_img.png"):
 
 def write_text(img_size, desired_text):
     """
-    Writes a text in black to a white image and returns it.
+    Input: img_size: Tuple, desired_text: String
+    Output: Image
+    Description: Writes a text in black to a white image and returns it.
     """
     # create an image
     img_txt = Image.new('RGB', img_size, (1,0,0))
